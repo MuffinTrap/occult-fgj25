@@ -10,9 +10,8 @@
 /[Ll]ogs/
 /[Uu]ser[Ss]ettings/
 
-
-# Do not include LDTK exports folder
-/simplified/
+# No map exports
+**/simplified/
 
 # MemoryCaptures can get excessive in size.
 # They also could contain extremely sensitive data
