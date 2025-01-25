@@ -28,16 +28,23 @@ public class CafeLogic : MonoBehaviour {
 		Gameplay, // Move and talk to characters
 		// Story beats
 		Enter,
-		BlackCat,
-		Drinks,
+		BellInteract,
+		DrinkTea,
+		
 		AllSymbolsInteracted,
+		DrinkCoffee,
+		
+		BlancheInteractDone,
+		DrinkHerbal,
+		
 		AllDrinksDone,
-		BlackCatAppear,
-		CharactersAppear,
+		Epiloque,
 		ToCredits
 		
 	}
 	public CafeState cafeState = CafeState.Start;
+
+	private int drinksCounter = 0;
 	
 	// Introduction text
 	private Image introBackground;
@@ -46,8 +53,8 @@ public class CafeLogic : MonoBehaviour {
 
 	// Moving the black cat
 	private Vector3 BlackCatTargetPoint;
-	public string BlackCatName;
-	private GameObject BlackCat;
+	public GameObject BlackCat;
+	public GameObject Darkness;
 	public float BlackCatSpeed = 1.0f;
 	
 	// Appearing characters
@@ -66,12 +73,12 @@ public class CafeLogic : MonoBehaviour {
 	// Occult symbols
 	public List<GameObject> Symbols;
 
+	// Bell on the counter
 	public GameObject BellOnCounter;
 	
 	// Use this for initialization
 	void Start () {
 		BlackCatTargetPoint = GameObject.Find("BlackCatTargetPoint").transform.position;
-		BlackCat = GameObject.Find(BlackCatName);
 		introBackground = IntroBg.GetComponent<Image>();
 		IntroText = introBackground.GetComponentInChildren<Text>();
 		ChangeState(CafeState.Start);
@@ -104,28 +111,59 @@ public class CafeLogic : MonoBehaviour {
 			introBackground.enabled = true;
 			IntroText.enabled = true;
 			ShowSymbols(false);
+			ShowBlackCat(false);
+			ShowBlanche(false);
+			ShowArgent(false);
+			ShowRaye(false);
+			
+			ShowBell(true);
+			ShowDarkness(true);
 		}
 		else if (newState == CafeState.Gameplay)
 		{
 			introBackground.enabled = false;
 			IntroText.enabled = false;
 		}
-		else if (newState == CafeState.CharactersAppear)
+		else if (newState == CafeState.BellInteract)
+		{
+			ShowRaye(true);
+		}
+		else if (newState == CafeState.DrinkTea)
+		{
+			ShowBell(false);
+			ShowSymbols(true);
+		}
+		else if (newState == CafeState.AllSymbolsInteracted)
+		{
+			ShowSymbols(false);
+			ShowBell(true);
+		}
+		else if (newState == CafeState.DrinkCoffee)
+		{
+			ShowBell(false);
+			ShowBlanche(true);
+		}
+		else if (newState == CafeState.BlancheInteractDone)
+		{
+			ShowBell(true);
+			ShowBlanche(false);
+		}
+		else if (newState == CafeState.DrinkHerbal)
+		{
+			ShowBell(false);
+			ShowArgent(true);
+		}
+		
+		else if (newState == CafeState.AllDrinksDone)
 		{
 			// TODO: Make characters and occult symbols appear
 			foreach (GameObject character in appearCharacters)
 			{
 				character.SetActive(true);
 			}
-		}
-		else if (newState == CafeState.AllDrinksDone)
-		{
-			
-		}
-		else if (newState == CafeState.BlackCatAppear)
-		{
-			// Move black cat until it is at target position
 			// Then make characters appear
+			ShowBlackCat(true);
+			
 		}
 		else if (newState == CafeState.ToCredits)
 		{
@@ -163,13 +201,23 @@ public class CafeLogic : MonoBehaviour {
 	{
 		Argent.SetActive(visible);
 	}
+
+	void ShowBlackCat(bool visible)
+	{
+		BlackCat.SetActive(visible);
+	}
+
+	void ShowDarkness(bool visible)
+	{
+		Darkness.SetActive(visible);
+	}
 	
 	// Update is called once per frame
 	void Update () 
 	{
 		switch (cafeState)
 		{
-			case CafeState.BlackCatAppear:
+			case CafeState.AllDrinksDone:
 			{
 				if (BlackCat != null)
 				{
@@ -178,19 +226,10 @@ public class CafeLogic : MonoBehaviour {
 						Time.deltaTime * BlackCatSpeed);
 					if (Vector3.Distance(BlackCat.transform.position, BlackCatTargetPoint) < 0.1f)
 					{
-						ChangeState(CafeState.CharactersAppear);
+						ChangeState(CafeState.Epiloque);
 					}
 				}
 			}
-				break;
-			
-			case CafeState.CharactersAppear:
-				
-				CharacterAppearCounter += Time.deltaTime;
-				if (CharacterAppearCounter >= CharacterAppearDuration)
-				{
-					ChangeState(CafeState.ToCredits);
-				}
 				break;
 			default: 
 				// NOP
