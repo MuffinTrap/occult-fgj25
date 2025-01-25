@@ -12,10 +12,12 @@ public class PlayerController : MonoBehaviour {
 	Vector3 moveTarget;
 	Rigidbody2D rb;
 	SpriteRenderer spriteRenderer;
+	Animator animator;
 	// Use this for initialization
 	void Start () {
 		rb = GetComponent<Rigidbody2D>();
 		spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+		animator = GetComponentInChildren<Animator>();
 		
 		camera = Camera.main;
 	}
@@ -36,9 +38,10 @@ public class PlayerController : MonoBehaviour {
 		if (moveDirection > 0)
 		{
 			spriteRenderer.flipX = true;
-		}
+            animator.SetBool("isWalking", true);
+        }
 		else { 
-			spriteRenderer.flipX = false;
+			
 		}
 		//mouse movement
 		if (Input.GetButtonDown("Fire1"))
@@ -47,6 +50,17 @@ public class PlayerController : MonoBehaviour {
 			moveTargetReached = false;
 
 		}
+
+		if (moveDirection < 0)
+		{
+            animator.SetBool("isWalking", true);
+            spriteRenderer.flipX = false;
+        }
+
+		if (Math.Abs(moveDirection) == 0)
+		{
+            animator.SetBool("isWalking", false);
+        }
 
 		if (moveTargetReached == false)
 		{
