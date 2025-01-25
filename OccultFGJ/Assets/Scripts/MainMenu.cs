@@ -14,10 +14,6 @@ public class MainMenu : MonoBehaviour
 		menuMusicAudio = GetComponentInChildren<AudioSource>();
 		
 		musicSlider = GameObject.Find("MusicSlider").GetComponent<Slider>();
-		
-		// This is preserved so that the music
-		// volume can be carried to the map
-		DontDestroyOnLoad(this.gameObject);
 	}
 	
 	// Update is called once per frame
@@ -27,7 +23,9 @@ public class MainMenu : MonoBehaviour
 
 	public void StartGame()
 	{
-		SceneManager.LoadScene("Cafe");
+		SceneManager.LoadScene("cafe_level");
+		PlayerPrefs.SetFloat("MusicVolume", musicSlider.value);
+		menuMusicAudio.Stop();
 	}
 
 	public void OnMusicVolumeChanged()
