@@ -13,27 +13,27 @@
     </tree>
 
     <tree id="01_enter">
-    <speakers>
-        <speaker name="Leona"/>
-    </speakers>
-    <node id="01_enter_root">
-        <speaker name="Leona"/>
-        <text text="Uhh… are all the witches invisible, or is this just a slow afternoon?."/>
-        <choice text="Continue" effect="exit">
-        </choice>
-    </node>
+        <speakers>
+            <speaker name="Leona"/>
+        </speakers>
+        <node id="01_enter_root">
+            <speaker name="Leona"/>
+            <text text="Uhh… are all the witches invisible, or is this just a slow afternoon?."/>
+            <choice text="Continue" effect="exit">
+            </choice>
+        </node>
     </tree>
 
     <tree id="01_blackcat">
-    <speakers>
-        <speaker name="Leona"/>
-        <speaker name="Mysterious Darkness"/>
-    </speakers>
-    <node id="01_blackcat_root">
-        <speaker name="Mysterious Darkness"/>
-        <text text="HISS"/>
-        <choice text="???" next="01_blackcat_leona" effect="none"/>
-    </node>
+        <speakers>
+            <speaker name="Leona"/>
+            <speaker name="Mysterious Darkness"/>
+        </speakers>
+        <node id="01_blackcat_root">
+            <speaker name="Mysterious Darkness"/>
+            <text text="HISS"/>
+            <choice text="???" next="01_blackcat_leona" effect="none"/>
+        </node>
     <node id="01_blackcat_leona">
         <speaker name="Leona"/>
         <choice text="Yikes! (Leave)" effect="exit">

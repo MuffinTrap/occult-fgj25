@@ -30,20 +30,16 @@ public class Character : MonoBehaviour {
 		}
 	}
 
-	public void StartDialogue()
-	{
-		
-		dialogueManager.StartDialogue(gameObject);
-	}
 	public void ProgressDialogue()
 	{
+		Dialogue dialogue = gameObject.GetComponentInChildren<Dialogue>();
 		if (dialogueManager.state == DialogueManager.DialogueState.Ongoing)
 		{
-			dialogueManager.ProgressDialogue();
+			dialogueManager.ProgressDialogue(dialogue);
 		}
 		else
 		{
-			StartDialogue();
+			dialogueManager.StartDialogue(gameObject, dialogue);
 		}
 	}
 	
