@@ -1,0 +1,55 @@
+<story>
+    <tree id="00_intro">
+        <speakers>
+            <speaker name="Leona"/>
+        </speakers>
+        <node id="00_intro_root">
+            <speaker name="Leona"/>
+            <text text="I’m Leona, and I want to be a witch. I’m going to the Cat Cult Café and I heard all the cool witches hang out here! I hope to meet someone who can get me started on my magical journey."/>
+            <choice text="Continue" effect="none">
+                <sets_flag id="go_cafe"/>
+            </choice>
+        </node>
+    </tree>
+
+    <tree id="01_enter">
+    <speakers>
+        <speaker name="Leona"/>
+    </speakers>
+    <node id="01_enter_root">
+        <speaker name="Leona"/>
+        <text text="Uhh… are all the witches invisible, or is this just a slow afternoon?."/>
+        <choice text="Continue" effect="exit">
+        </choice>
+    </node>
+    </tree>
+
+    <tree id="01_blackcat">
+    <speakers>
+        <speaker name="Leona"/>
+        <speaker name="Mysterious Darkness"/>
+    </speakers>
+    <node id="01_blackcat_root">
+        <speaker name="Mysterious Darkness"/>
+        <text text="HISS"/>
+        <choice text="???" next="01_blackcat_leona" effect="none"/>
+    </node>
+    <node id="01_blackcat_leona">
+        <speaker name="Leona"/>
+        <choice text="Yikes! (Leave)" effect="exit">
+                <sets_flag id="md_discovered"/>
+        </choice>
+        <choice text="Oh no, I didn't mean to disturb you. Are you quite alright?" next="01_evil_growl" effect="none"/>
+        </node>
+        <node id="01_evil_growl">
+        <speaker name="Mysterious Darkness"/>
+        <text text="(Evil dark low growling)"/>
+        <choice text="(Uhh...)" next="01_blackcat_leona2" effect="none"/>       
+        </node>
+        <node id="01_blackcat_leona02">
+        <speaker name="Leona"/>
+        <choice text="I better leave this for now. (Leave)" effect="exit"/>       
+        </node>
+
+    </tree>
+</story>

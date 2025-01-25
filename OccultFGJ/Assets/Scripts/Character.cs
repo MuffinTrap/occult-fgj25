@@ -32,6 +32,8 @@ public class Character : MonoBehaviour {
 	public void StartDialogue()
 	{
 		Debug.Log("StartDialogue called");
+		DialogueManager dialogueManager = GameObject.Find("DialogueManager").GetComponent<DialogueManager>();
+		dialogueManager.StartDialogue(gameObject);
 	}
 
 	public void EnableHighlight()
