@@ -8,70 +8,46 @@ using UnityEngine;
 
 public class DialogueManager : MonoBehaviour {
 
-	public struct Dialogue
+	public enum DialogueState
 	{
-		public string speaker;
-		public string[] text;
-		public string[] choices;
-
-		public Dialogue(string speaker, string[] text, string[] choices) : this()
-		{
-			this.speaker = speaker;
-			this.text = text;
-			this.choices = choices;
-		}
+		None,
+		Ongoing,
+		Choice,
 	}
-	[SerializeField] public Dialogue dialogue 
-		= new Dialogue("Leona", 
-						new string[] {"HISS"}, 
-						new string[] {"Choice1", "Choice2"});
+
+	[SerializeField] public DialogueState state = DialogueState.None;
 	[SerializeField] public GameObject speechBubble;
 	private Text textArea;
 	
-	public void StartDialogue(GameObject character)
+	
+	public void StartDialogue(GameObject character, Dialogue dialogue)
 	{
+		state = DialogueState.Ongoing;
 		speechBubble.SetActive(true);
 
 		textArea = speechBubble.GetComponentInChildren<Text>();
 		speechBubble.transform.position = Camera.main.WorldToScreenPoint(character.transform.position);
-		textArea.text = dialogue.text[0];
+		textArea.text = dialogue.text[dialogue.textIterator];
 	}
 	
-	public void ContinueDialogue()
+	public void ProgressDialogue(Dialogue dialogue)
 	{
-		// continue dialogue
+		dialogue.textIterator++;
+		if (dialogue.textIterator >= dialogue.text.Length)
+		{
+			EndDialogue(dialogue);
+			return;
+		}
+
+		textArea.text = dialogue.text[dialogue.textIterator];
+		
 	}
 
+	public void EndDialogue(Dialogue dialogue)
+	{
+		state = DialogueState.None;
+		speechBubble.SetActive(false);
+		dialogue.textIterator = 0;
+	}
 }
 
-
-
-/*
-void ReadXML() {
-
-		string path = "Assets/Text/dialogue.xml";
-		text = GetComponent<Text>();
-
-        //Load
-		using (StreamReader reader = new StreamReader(path))
-		{
-			while (reader.EndOfStream == false)
-			{
-				string lines = reader.ReadToEnd();
-
-				XmlDocument doc = new XmlDocument();
-				doc.LoadXml(lines);
-
-				XmlNode root = doc.FirstChild;
-
-				if (root.HasChildNodes)
-				{
-					for (int i = 0; i < root.ChildNodes.Count; i++)
-					{
-						Debug.Log(root.ChildNodes[i].InnerText);
-					}
-				}
-			}
-		}
-    }
-*/
