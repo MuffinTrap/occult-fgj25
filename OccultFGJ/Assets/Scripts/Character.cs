@@ -6,12 +6,13 @@ using UnityEngine;
 public class Character : MonoBehaviour {
 
 	bool highlighted = false;
+	DialogueManager dialogueManager;
 
 	private float zRotate = 0.0f;
 	private float slowTime = 0.0f;
 	// Use this for initialization
 	void Start () {
-		
+		dialogueManager = GameObject.Find("DialogueManager").GetComponent<DialogueManager>();
 	}
 	
 	// Update is called once per frame
@@ -31,10 +32,21 @@ public class Character : MonoBehaviour {
 
 	public void StartDialogue()
 	{
-		Debug.Log("StartDialogue called");
-		DialogueManager dialogueManager = GameObject.Find("DialogueManager").GetComponent<DialogueManager>();
+		
 		dialogueManager.StartDialogue(gameObject);
 	}
+	public void ProgressDialogue()
+	{
+		if (dialogueManager.state == DialogueManager.DialogueState.Ongoing)
+		{
+			dialogueManager.ProgressDialogue();
+		}
+		else
+		{
+			StartDialogue();
+		}
+	}
+	
 
 	public void EnableHighlight()
 	{

@@ -8,6 +8,14 @@ using UnityEngine;
 
 public class DialogueManager : MonoBehaviour {
 
+	public enum DialogueState
+	{
+		None,
+		Ongoing,
+		Choice,
+
+	}
+
 	public struct Dialogue
 	{
 		public string speaker;
@@ -23,25 +31,44 @@ public class DialogueManager : MonoBehaviour {
 	}
 	[SerializeField] public Dialogue dialogue 
 		= new Dialogue("Leona", 
-						new string[] {"HISS"}, 
+						new string[] {"HISS", "GRRR", "MEOW"}, 
 						new string[] {"Choice1", "Choice2"});
+	[SerializeField] public DialogueState state = DialogueState.None;
 	[SerializeField] public GameObject speechBubble;
+	[SerializeField] public int textIterator = 0;
 	private Text textArea;
 	
 	public void StartDialogue(GameObject character)
 	{
+		state = DialogueState.Ongoing;
 		speechBubble.SetActive(true);
+		textIterator = 0;
 
 		textArea = speechBubble.GetComponentInChildren<Text>();
 		speechBubble.transform.position = Camera.main.WorldToScreenPoint(character.transform.position);
-		textArea.text = dialogue.text[0];
+		textArea.text = dialogue.text[textIterator];
 	}
 	
-	public void ContinueDialogue()
+	public void ProgressDialogue()
 	{
-		// continue dialogue
+		//Debug.Log("Progressing dialogue");
+		textIterator++;
+		if (textIterator < dialogue.text.Length)
+		{
+			textArea.text = dialogue.text[textIterator];
+		}
+		else
+		{
+			EndDialogue();
+		}
 	}
 
+	public void EndDialogue()
+	{
+		state = DialogueState.None;
+		speechBubble.SetActive(false);
+		textIterator = 0;
+	}
 }
 
 

@@ -46,9 +46,8 @@ public class PlayerInteract : MonoBehaviour {
 
 			if (interactionTarget != null)
 			{
-				interactionTarget.StartDialogue();
+				interactionTarget.ProgressDialogue();
 				
-				// TODO: Change interaction state so can advance in the dialogue 
 			}
 		}
 	}
