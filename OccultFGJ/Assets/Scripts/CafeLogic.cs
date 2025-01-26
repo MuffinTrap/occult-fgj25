@@ -37,6 +37,9 @@ public class CafeLogic : MonoBehaviour {
 		// drinks 
 		BellInteract, 
 		
+		// This happens when player has talked to Ray
+		RayeInteractionDone,
+		
 		// Player orders the tea and drinks it
 		DrinkTea,
 		
@@ -89,6 +92,9 @@ public class CafeLogic : MonoBehaviour {
 	public GameObject Darkness;
 	public float BlackCatSpeed = 1.0f;
 	
+	// Bell 
+	private BellInteraction bellScript;
+	
 	// Appearing characters
 	public List<GameObject> appearCharacters;
 	
@@ -118,6 +124,7 @@ public class CafeLogic : MonoBehaviour {
 		introBackground = IntroBg.GetComponent<Image>();
 		IntroText = introBackground.GetComponentInChildren<Text>();
 		cafeMusicPlayer = GameObject.Find("MusicPlayer").GetComponent<MusicPlayer>();
+		bellScript = GameObject.Find("bell").GetComponent<BellInteraction>();
 		ChangeState(CafeState.Introduction);
 	}
 
@@ -236,6 +243,11 @@ public class CafeLogic : MonoBehaviour {
 				cafeMusicPlayer.PlayCafeMusic();
 			}
 				break;
+			case CafeState.RayeInteractionDone:
+				// DEMO  
+				ChangeState(CafeState.ToCredits);
+
+				break;
 			case CafeState.DrinkTea:
 			{
 				ShowBell(false);
@@ -307,6 +319,7 @@ public class CafeLogic : MonoBehaviour {
 	void ShowBell(bool visible)
 	{
 		BellOnCounter.SetActive(visible);
+		bellScript.hasBeenInteracted = false;
 	}
 
 	void ShowBlanche(bool visible)
