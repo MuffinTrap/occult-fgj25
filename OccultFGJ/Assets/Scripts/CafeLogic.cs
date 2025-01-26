@@ -37,6 +37,9 @@ public class CafeLogic : MonoBehaviour {
 		// drinks 
 		BellInteract, 
 		
+		// This happens when player has talked to Ray
+		RayeInteractionDone,
+		
 		// Player orders the tea and drinks it
 		DrinkTea,
 		
@@ -64,7 +67,8 @@ public class CafeLogic : MonoBehaviour {
 		ToCredits
 		
 	}
-	public CafeState cafeState = CafeState.Introduction;
+	private CafeState cafeState = CafeState.Introduction;
+	private CafeState incomingState = CafeState.Introduction;
 
 	// How many of the drinks the player has 
 	// ordered: Tea: Coffee: Herbal tea
@@ -73,6 +77,9 @@ public class CafeLogic : MonoBehaviour {
 	// How many of the symbols the player
 	// has interacted with 0-3
 	private int symbolsCounter = 0;
+	
+	// When symbols are visible, player spooky music
+	private MusicPlayer cafeMusicPlayer;
 	
 	// Introduction text
 	public GameObject IntroBg;
@@ -85,10 +92,15 @@ public class CafeLogic : MonoBehaviour {
 	public GameObject Darkness;
 	public float BlackCatSpeed = 1.0f;
 	
+	// Bell 
+	private BellInteraction bellScript;
+	
 	// Appearing characters
 	public List<GameObject> appearCharacters;
-	public float CharacterAppearDuration = 2.0f;
-	private float CharacterAppearCounter = 0.0f;
+	
+	public bool stateChangeInProgress = false;
+	public float stateChangeDuration = 3.0f;
+	public float stateChangeCounter = 0.0f;
 	
 	// Barista Raye
 	public GameObject RayeCat;
@@ -101,6 +113,7 @@ public class CafeLogic : MonoBehaviour {
 	
 	// Occult symbols
 	public List<GameObject> Symbols;
+	// Leave time for sounds to play
 
 	// Bell on the counter
 	public GameObject BellOnCounter;
@@ -110,9 +123,15 @@ public class CafeLogic : MonoBehaviour {
 		BlackCatTargetPoint = GameObject.Find("BlackCatTargetPoint").transform.position;
 		introBackground = IntroBg.GetComponent<Image>();
 		IntroText = introBackground.GetComponentInChildren<Text>();
+		cafeMusicPlayer = GameObject.Find("MusicPlayer").GetComponent<MusicPlayer>();
+		bellScript = GameObject.Find("bell").GetComponent<BellInteraction>();
 		ChangeState(CafeState.Introduction);
 	}
 
+	public CafeState GetCafeState()
+	{
+		return cafeState;
+	}
 	public int GetDrinksCounter()
 	{
 		return drinksCounter;
@@ -189,6 +208,13 @@ public class CafeLogic : MonoBehaviour {
 	// a dialogue finishes
 	public void ChangeState(CafeState newState)
 	{
+		// Avoid getting stuck in a loop
+		if (!stateChangeInProgress && newState == CafeState.AllSymbolsInteracted && incomingState != CafeState.AllSymbolsInteracted)
+		{
+			incomingState = newState;
+			stateChangeInProgress = true;
+			return;
+		}
 		switch (newState)
 		{
 			case CafeState.Introduction:
@@ -214,18 +240,26 @@ public class CafeLogic : MonoBehaviour {
 			case CafeState.BellInteract:
 			{
 				ShowRaye(true);
+				cafeMusicPlayer.PlayCafeMusic();
 			}
+				break;
+			case CafeState.RayeInteractionDone:
+				// DEMO  
+				ChangeState(CafeState.ToCredits);
+
 				break;
 			case CafeState.DrinkTea:
 			{
 				ShowBell(false);
 				ShowSymbols(true);
+				cafeMusicPlayer.PlaySpookyMusic();
 			}
 				break;
 			case CafeState.AllSymbolsInteracted:
 			{
 				ShowSymbols(false);
 				ShowBell(true);
+				cafeMusicPlayer.PlayCafeMusic();
 			}
 				break;
 			case CafeState.DrinkCoffee:
@@ -266,7 +300,6 @@ public class CafeLogic : MonoBehaviour {
 				break;
 		}
 
-		CharacterAppearCounter = 0.0f;
 		cafeState = newState;
 	}
 
@@ -286,6 +319,7 @@ public class CafeLogic : MonoBehaviour {
 	void ShowBell(bool visible)
 	{
 		BellOnCounter.SetActive(visible);
+		bellScript.hasBeenInteracted = false;
 	}
 
 	void ShowBlanche(bool visible)
@@ -311,19 +345,30 @@ public class CafeLogic : MonoBehaviour {
 	// Update is called once per frame
 	void Update () 
 	{
+		if (stateChangeInProgress)
+		{
+			stateChangeCounter += Time.deltaTime;
+			if (stateChangeCounter >= stateChangeDuration)
+			{
+				stateChangeCounter = 0.0f;
+				stateChangeInProgress = false;
+				ChangeState(incomingState);
+			}
+		}
 		switch (cafeState)
 		{
 			case CafeState.AllDrinksDone:
 			{
 				if (BlackCat != null)
 				{
-					Vector3 newPos = Vector3.MoveTowards(BlackCat.transform.position,
+					BlackCat.transform.position = Vector3.MoveTowards(BlackCat.transform.position,
 						BlackCatTargetPoint,
 						Time.deltaTime * BlackCatSpeed);
 					if (Vector3.Distance(BlackCat.transform.position, BlackCatTargetPoint) < 0.1f)
 					{
 						ChangeState(CafeState.Epiloque);
 					}
+					Debug.DrawLine(BlackCat.transform.position, BlackCatTargetPoint, Color.red);
 				}
 			}
 				break;

@@ -9,7 +9,7 @@ public class PlayerController : MonoBehaviour {
 	Camera camera;
 	bool moveTargetReached = true;
 	public float moveDirection;
-	Vector3 moveTarget;
+	public Vector3 moveTarget;
 	Rigidbody2D rb;
 	SpriteRenderer spriteRenderer;
 	Animator animator;
@@ -46,7 +46,8 @@ public class PlayerController : MonoBehaviour {
 		//mouse movement
 		if (Input.GetButtonDown("Fire1"))
 		{
-			moveTarget = Input.mousePosition;
+			
+			moveTarget.x = Mathf.Clamp(Input.mousePosition.x, 406,970);
 			moveTargetReached = false;
 
 		}

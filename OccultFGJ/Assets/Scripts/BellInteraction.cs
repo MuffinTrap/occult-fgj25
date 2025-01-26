@@ -1,27 +1,21 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Character : MonoBehaviour {
+public class BellInteraction : MonoBehaviour {
 
-	public enum Characters
-	{
-		Darkness,
-		Raye,
-		Blanche,
-		Argent,
-		None
-	}
-	public Characters character;
 	bool highlighted = false;
-	DialogueManager dialogueManager;
-
 	private float zRotate = 0.0f;
-	private float slowTime = 0.0f;
+	private float slowTime = 0.0f;	
+
+	private CafeLogic logic;
+	public bool hasBeenInteracted = false;
+	private AudioSource sound;
+
 	// Use this for initialization
 	void Start () {
-		dialogueManager = GameObject.Find("DialogueManager").GetComponent<DialogueManager>();
+		logic = GameObject.Find("GameLogic").GetComponent<CafeLogic>();
+		sound = GetComponent<AudioSource>();
 	}
 	
 	// Update is called once per frame
@@ -39,24 +33,22 @@ public class Character : MonoBehaviour {
 		}
 	}
 
-	public void ProgressDialogue()
+	public void OnSymbolInteracted()
 	{
-		DialogueTree dialogueTree = gameObject.GetComponentInChildren<DialogueTree>();
-		if (dialogueManager.state == DialogueManager.DialogueState.Ongoing)
+		if (!hasBeenInteracted)
 		{
-			dialogueManager.ProgressDialogue(dialogueTree);
-		}
-		else
-		{
-			dialogueManager.StartDialogue(gameObject, dialogueTree);
+			sound.PlayOneShot(sound.clip);
+			hasBeenInteracted = true;
+			logic.ChangeState(CafeLogic.CafeState.BellInteract);
 		}
 	}
-	
 
 	public void EnableHighlight()
 	{
-		highlighted = true;
-		
+		if (hasBeenInteracted == false)
+		{
+			highlighted = true;
+		}
 	}
 
 	public void DisableHighlight()

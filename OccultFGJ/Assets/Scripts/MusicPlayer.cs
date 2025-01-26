@@ -8,11 +8,20 @@ public class MusicPlayer : MonoBehaviour
 	private AudioClip cafeMusic;
 	[SerializeField]
 	private AudioClip spookyMusic;
-	
+
+	private enum MusicPlaying
+	{
+		None,
+		PlayingCafeMusic,
+		PlayingSpookyMusic
+	}
+
+	private MusicPlaying currentMusic;
 	private AudioSource musicSource;
 	
 	// Use this for initialization
 	void Start () {
+		currentMusic = MusicPlaying.None;
 		musicSource = GetComponent<AudioSource>();
 		musicSource.volume = PlayerPrefs.GetFloat("MusicVolume");
 		PlayCafeMusic();
@@ -20,14 +29,22 @@ public class MusicPlayer : MonoBehaviour
 
 	public void PlayCafeMusic()
 	{
-		musicSource.clip = cafeMusic;
-		musicSource.Play();
+		if (currentMusic != MusicPlaying.PlayingCafeMusic)
+		{
+			musicSource.clip = cafeMusic;
+			musicSource.Play();
+			currentMusic = MusicPlaying.PlayingCafeMusic;
+		}
 	}
 
 	public void PlaySpookyMusic()
 	{
-		musicSource.clip = spookyMusic;
-		musicSource.Play();
+		if (currentMusic != MusicPlaying.PlayingSpookyMusic)
+		{
+			musicSource.clip = spookyMusic;
+			musicSource.Play();
+			currentMusic = MusicPlaying.PlayingSpookyMusic;
+		}
 	}
 	
 	// Update is called once per frame
