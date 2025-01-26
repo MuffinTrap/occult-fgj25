@@ -32,14 +32,14 @@ public class Character : MonoBehaviour {
 
 	public void ProgressDialogue()
 	{
-		Dialogue dialogue = gameObject.GetComponentInChildren<Dialogue>();
+		DialogueTree dialogueTree = gameObject.GetComponentInChildren<DialogueTree>();
 		if (dialogueManager.state == DialogueManager.DialogueState.Ongoing)
 		{
-			dialogueManager.ProgressDialogue(dialogue);
+			dialogueManager.ProgressDialogue(dialogueTree);
 		}
 		else
 		{
-			dialogueManager.StartDialogue(gameObject, dialogue);
+			dialogueManager.StartDialogue(gameObject, dialogueTree);
 		}
 	}
 	
