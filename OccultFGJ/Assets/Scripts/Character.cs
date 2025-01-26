@@ -7,11 +7,13 @@ public class Character : MonoBehaviour {
 
 	public enum Characters
 	{
+		None,
 		Darkness,
 		Raye,
 		Blanche,
 		Argent,
-		None
+		Leona
+		
 	}
 	public Characters character;
 	bool highlighted = false;

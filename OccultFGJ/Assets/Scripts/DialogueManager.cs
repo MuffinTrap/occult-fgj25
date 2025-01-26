@@ -53,6 +53,9 @@ public class DialogueManager : MonoBehaviour {
 		{
 			return;
 		}
+
+		MoveSpeechBubble(dialogue);
+
 		textArea.text = dialogue.textLines[dialogue.lineIterator];
 		audioSource.PlayOneShot(dialogue.audioLines[dialogue.lineIterator], 1.0f);
 	}
@@ -65,6 +68,32 @@ public class DialogueManager : MonoBehaviour {
 		if (latestCharacter == Character.Characters.Raye)
 		{
 			GameObject.Find("GameLogic").GetComponent<CafeLogic>().ChangeState(CafeLogic.CafeState.RayeInteractionDone);
+		}
+	}
+
+	public void MoveSpeechBubble(Dialogue dialogue)
+	{
+		CafeLogic logic = GameObject.Find("GameLogic").GetComponent<CafeLogic>();
+		if(dialogue.speaker == Character.Characters.Leona)
+		{
+			GameObject player = GameObject.Find("PlayerCharacter");
+			speechBubble.transform.position = Camera.main.WorldToScreenPoint(player.transform.position);
+		}
+		else if(dialogue.speaker == Character.Characters.Darkness)
+		{
+			speechBubble.transform.position = Camera.main.WorldToScreenPoint(logic.BlackCat.transform.position);
+		}
+		else if(dialogue.speaker == Character.Characters.Raye)
+		{
+			speechBubble.transform.position = Camera.main.WorldToScreenPoint(logic.RayeCat.transform.position);
+		}
+		else if(dialogue.speaker == Character.Characters.Blanche)
+		{
+			speechBubble.transform.position = Camera.main.WorldToScreenPoint(logic.BlancheCat.transform.position);
+		}
+		else if(dialogue.speaker == Character.Characters.Argent)
+		{
+			speechBubble.transform.position = Camera.main.WorldToScreenPoint(logic.Argent.transform.position);
 		}
 	}
 }
