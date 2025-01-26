@@ -27,37 +27,37 @@ public class DialogueManager : MonoBehaviour {
 			audioSource = gameObject.AddComponent<AudioSource>();
 		}
 	}
-	
-	
-	public void StartDialogue(GameObject character, Dialogue dialogue)
+
+	public void StartDialogue(GameObject character, DialogueTree dialogueTree)
 	{
 		state = DialogueState.Ongoing;
 		speechBubble.SetActive(true);
 
 		textArea = speechBubble.GetComponentInChildren<Text>();
 		speechBubble.transform.position = Camera.main.WorldToScreenPoint(character.transform.position);
+
+		ActDialogue(dialogueTree.GetDialogue());
+	}
+	
+	public void ProgressDialogue(DialogueTree dialogueTree)
+	{
+		ActDialogue(dialogueTree.NextLine());
+	}
+
+	void ActDialogue(Dialogue dialogue)
+	{
+		if (dialogue == null)
+		{
+			return;
+		}
 		textArea.text = dialogue.textLines[dialogue.lineIterator];
 		audioSource.PlayOneShot(dialogue.audioLines[dialogue.lineIterator], 1.0f);
 	}
-	
-	public void ProgressDialogue(Dialogue dialogue)
-	{
-		dialogue.lineIterator++;
-		if (dialogue.lineIterator >= dialogue.textLines.Length)
-		{
-			EndDialogue(dialogue);
-			return;
-		}
 
-		textArea.text = dialogue.textLines[dialogue.lineIterator];
-		audioSource.PlayOneShot(dialogue.audioLines[dialogue.lineIterator], 1.0f);		
-	}
-
-	public void EndDialogue(Dialogue dialogue)
+	public void EndDialogue()
 	{
 		state = DialogueState.None;
 		speechBubble.SetActive(false);
-		dialogue.lineIterator = 0;
 	}
 }
 
