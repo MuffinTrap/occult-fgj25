@@ -348,13 +348,14 @@ public class CafeLogic : MonoBehaviour {
 			{
 				if (BlackCat != null)
 				{
-					Vector3 newPos = Vector3.MoveTowards(BlackCat.transform.position,
+					BlackCat.transform.position = Vector3.MoveTowards(BlackCat.transform.position,
 						BlackCatTargetPoint,
 						Time.deltaTime * BlackCatSpeed);
 					if (Vector3.Distance(BlackCat.transform.position, BlackCatTargetPoint) < 0.1f)
 					{
 						ChangeState(CafeState.Epiloque);
 					}
+					Debug.DrawLine(BlackCat.transform.position, BlackCatTargetPoint, Color.red);
 				}
 			}
 				break;
