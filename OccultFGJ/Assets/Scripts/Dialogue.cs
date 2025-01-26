@@ -5,7 +5,7 @@ using UnityEngine;
 public class Dialogue : MonoBehaviour {
 
 
-	public string speaker;
+	public Character.Characters speaker;
 	public string[] textLines;
 	public AudioClip[] audioLines;
 	public int lineIterator = 0;
