@@ -22,33 +22,61 @@ public class MenuRect
 
 public class CafeLogic : MonoBehaviour {
 
+	// This is the state of the game
+	// it is expected to advance in this order
 	public enum CafeState
 	{
-		Start, // Show introduction text
-		Gameplay, // Move and talk to characters
-		// Story beats
+		Introduction, // Show introduction text
+		Gameplay, // Move and talk to characters, this state is used multiple times
+		// Story parts:
+		
+		// Player starts in the cafe
 		Enter,
-		BellInteract,
+		// Interacts with bell: this happens multiple times
+		// The next state depends on the current state or amount of
+		// drinks 
+		BellInteract, 
+		
+		// Player orders the tea and drinks it
 		DrinkTea,
 		
+		// Player has interacted with all the symbols
 		AllSymbolsInteracted,
+		
+		// Player orders coffee and drinks it
 		DrinkCoffee,
-		
+		// Player has talked to Blanche
 		BlancheInteractDone,
-		DrinkHerbal,
 		
+		// Player order herbal tea and drinks it
+		DrinkHerbal,
+		// Player has talked to Argent
+		ArgentInteractDone,
+		
+		// When player has ordered all 3 drinks
+		// The smol black cat comes out of the Darkness
 		AllDrinksDone,
+		
+		// Epiloque dialogue 
 		Epiloque,
+		
+		// Game changes to end_screen scene
 		ToCredits
 		
 	}
-	public CafeState cafeState = CafeState.Start;
+	public CafeState cafeState = CafeState.Introduction;
 
+	// How many of the drinks the player has 
+	// ordered: Tea: Coffee: Herbal tea
 	private int drinksCounter = 0;
 	
+	// How many of the symbols the player
+	// has interacted with 0-3
+	private int symbolsCounter = 0;
+	
 	// Introduction text
-	private Image introBackground;
 	public GameObject IntroBg;
+	private Image introBackground;
 	public Text IntroText;
 
 	// Moving the black cat
@@ -68,6 +96,7 @@ public class CafeLogic : MonoBehaviour {
 	// White cat Blanche
 	public GameObject BlancheCat;
 
+	// Grey cat Argent
 	public GameObject Argent;
 	
 	// Occult symbols
@@ -81,9 +110,39 @@ public class CafeLogic : MonoBehaviour {
 		BlackCatTargetPoint = GameObject.Find("BlackCatTargetPoint").transform.position;
 		introBackground = IntroBg.GetComponent<Image>();
 		IntroText = introBackground.GetComponentInChildren<Text>();
-		ChangeState(CafeState.Start);
+		ChangeState(CafeState.Introduction);
 	}
 
+	public int GetDrinksCounter()
+	{
+		return drinksCounter;
+	}
+	public int GetSymbolsCounter()
+	{
+		return symbolsCounter;
+	}
+
+	public void AddDrink()
+	{
+		drinksCounter++;
+		if (drinksCounter >= 3)
+		{
+			drinksCounter = 3;
+			ChangeState(CafeState.AllDrinksDone);
+		}
+	}
+
+	public void AddSymbol()
+	{
+		symbolsCounter++;
+		if (symbolsCounter >= 3)
+		{
+			symbolsCounter = 3;
+			ChangeState(CafeState.AllSymbolsInteracted);
+		}
+	}
+
+	// Debug buttons to change the state manually
 	public void OnGUI()
 	{
 		MenuRect rect = new MenuRect();
@@ -92,6 +151,7 @@ public class CafeLogic : MonoBehaviour {
 		rect.w = 200;
 		rect.h = 20;
 
+		GUI.TextArea(rect.GetNext(), "State : " + cafeState);
 		GUI.TextArea(rect.GetNext(), "Change Game State:");
 		string[] names = Enum.GetNames(typeof(CafeState));
 		CafeState[] values = Enum.GetValues(typeof(CafeState)) as CafeState[];
@@ -102,72 +162,108 @@ public class CafeLogic : MonoBehaviour {
 				 ChangeState(values[i]);	
 			}
 		}
-	}
-
-	void ChangeState(CafeState newState)
-	{
-		if (newState == CafeState.Start)
-		{
-			introBackground.enabled = true;
-			IntroText.enabled = true;
-			ShowSymbols(false);
-			ShowBlackCat(false);
-			ShowBlanche(false);
-			ShowArgent(false);
-			ShowRaye(false);
-			
-			ShowBell(true);
-			ShowDarkness(true);
-		}
-		else if (newState == CafeState.Gameplay)
-		{
-			introBackground.enabled = false;
-			IntroText.enabled = false;
-		}
-		else if (newState == CafeState.BellInteract)
-		{
-			ShowRaye(true);
-		}
-		else if (newState == CafeState.DrinkTea)
-		{
-			ShowBell(false);
-			ShowSymbols(true);
-		}
-		else if (newState == CafeState.AllSymbolsInteracted)
-		{
-			ShowSymbols(false);
-			ShowBell(true);
-		}
-		else if (newState == CafeState.DrinkCoffee)
-		{
-			ShowBell(false);
-			ShowBlanche(true);
-		}
-		else if (newState == CafeState.BlancheInteractDone)
-		{
-			ShowBell(true);
-			ShowBlanche(false);
-		}
-		else if (newState == CafeState.DrinkHerbal)
-		{
-			ShowBell(false);
-			ShowArgent(true);
-		}
 		
-		else if (newState == CafeState.AllDrinksDone)
+		rect.GetNext();
+
+		if (GUI.Button(rect.GetNext(), "Drink (" + drinksCounter + ")"))
 		{
-			// TODO: Make characters and occult symbols appear
-			foreach (GameObject character in appearCharacters)
-			{
-				character.SetActive(true);
-			}
-			// Then make characters appear
-			ShowBlackCat(true);
-			
+			drinksCounter = Math.Min(3, drinksCounter + 1);
 		}
-		else if (newState == CafeState.ToCredits)
+
+		if (GUI.Button(rect.GetNext(), "Clear drinks"))
 		{
-			SceneManager.LoadScene("end_screen");
+			drinksCounter = 0;
+		}
+		if (GUI.Button(rect.GetNext(), "Symbol (" + symbolsCounter + ")"))
+		{
+			symbolsCounter = Math.Min(3, symbolsCounter + 1);
+		}
+
+		if (GUI.Button(rect.GetNext(), "Clear symbols"))
+		{
+			symbolsCounter = 0;
+		}
+	}
+	
+	//  This is called by dialogue code when
+	// a dialogue finishes
+	public void ChangeState(CafeState newState)
+	{
+		switch (newState)
+		{
+			case CafeState.Introduction:
+			{
+				introBackground.enabled = true;
+				IntroText.enabled = true;
+				ShowSymbols(false);
+				ShowBlackCat(false);
+				ShowBlanche(false);
+				ShowArgent(false);
+				ShowRaye(false);
+
+				ShowBell(true);
+				ShowDarkness(true);
+			}
+				break;
+			case CafeState.Gameplay:
+			{
+				introBackground.enabled = false;
+				IntroText.enabled = false;
+			}
+				break;
+			case CafeState.BellInteract:
+			{
+				ShowRaye(true);
+			}
+				break;
+			case CafeState.DrinkTea:
+			{
+				ShowBell(false);
+				ShowSymbols(true);
+			}
+				break;
+			case CafeState.AllSymbolsInteracted:
+			{
+				ShowSymbols(false);
+				ShowBell(true);
+			}
+				break;
+			case CafeState.DrinkCoffee:
+			{
+				ShowBell(false);
+				ShowBlanche(true);
+			}
+				break;
+			case CafeState.BlancheInteractDone:
+			{
+				ShowBell(true);
+				ShowBlanche(false);
+			}
+				break;
+			case CafeState.DrinkHerbal:
+			{
+				ShowBell(false);
+				ShowArgent(true);
+			}
+				break;
+
+			case CafeState.AllDrinksDone:
+			{
+				// TODO: Make characters and occult symbols appear
+				foreach (GameObject character in appearCharacters)
+				{
+					character.SetActive(true);
+				}
+
+				// Then make characters appear
+				ShowBlackCat(true);
+			}
+				break;
+			case CafeState.ToCredits:
+			{
+				SceneManager.LoadScene("end_screen");
+			}
+				break;
 		}
 
 		CharacterAppearCounter = 0.0f;
@@ -230,9 +326,6 @@ public class CafeLogic : MonoBehaviour {
 					}
 				}
 			}
-				break;
-			default: 
-				// NOP
 				break;
 		}
 	}

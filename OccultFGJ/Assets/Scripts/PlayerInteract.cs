@@ -25,7 +25,7 @@ public class PlayerInteract : MonoBehaviour {
 		// Show highlight on the character
 		
 		// If button is pressed, launch dialogue
-		if (Input.GetButtonUp("Fire1"))
+		if (Input.GetButtonDown("Fire1"))
 		{
 			// Check if mouse is clicked over a character trigger
 			if (Input.GetMouseButtonDown(0))
