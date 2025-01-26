@@ -34,10 +34,19 @@ public class DialogueTree : MonoBehaviour {
 		treeIterator++;
 		if (treeIterator >= tree.Length)
 		{
-			treeIterator = 0;
+			ResetTree();
 			dialogueManager.EndDialogue();
 			return null;
 		}
 		return tree[treeIterator];
+	}
+
+	public void ResetTree()
+	{
+		treeIterator = 0;
+		foreach (Dialogue dialogue in tree)
+		{
+			dialogue.lineIterator = 0;
+		}
 	}
 }
