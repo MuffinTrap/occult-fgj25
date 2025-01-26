@@ -64,7 +64,7 @@ public class CafeLogic : MonoBehaviour {
 		ToCredits
 		
 	}
-	public CafeState cafeState = CafeState.Introduction;
+	private CafeState cafeState = CafeState.Introduction;
 
 	// How many of the drinks the player has 
 	// ordered: Tea: Coffee: Herbal tea
@@ -73,6 +73,9 @@ public class CafeLogic : MonoBehaviour {
 	// How many of the symbols the player
 	// has interacted with 0-3
 	private int symbolsCounter = 0;
+	
+	// When symbols are visible, player spooky music
+	private MusicPlayer cafeMusicPlayer;
 	
 	// Introduction text
 	public GameObject IntroBg;
@@ -110,9 +113,14 @@ public class CafeLogic : MonoBehaviour {
 		BlackCatTargetPoint = GameObject.Find("BlackCatTargetPoint").transform.position;
 		introBackground = IntroBg.GetComponent<Image>();
 		IntroText = introBackground.GetComponentInChildren<Text>();
+		cafeMusicPlayer = GameObject.Find("MusicPlayer").GetComponent<MusicPlayer>();
 		ChangeState(CafeState.Introduction);
 	}
 
+	public CafeState GetCafeState()
+	{
+		return cafeState;
+	}
 	public int GetDrinksCounter()
 	{
 		return drinksCounter;
@@ -214,18 +222,21 @@ public class CafeLogic : MonoBehaviour {
 			case CafeState.BellInteract:
 			{
 				ShowRaye(true);
+				cafeMusicPlayer.PlayCafeMusic();
 			}
 				break;
 			case CafeState.DrinkTea:
 			{
 				ShowBell(false);
 				ShowSymbols(true);
+				cafeMusicPlayer.PlaySpookyMusic();
 			}
 				break;
 			case CafeState.AllSymbolsInteracted:
 			{
 				ShowSymbols(false);
 				ShowBell(true);
+				cafeMusicPlayer.PlayCafeMusic();
 			}
 				break;
 			case CafeState.DrinkCoffee:
