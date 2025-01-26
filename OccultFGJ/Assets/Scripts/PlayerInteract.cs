@@ -27,53 +27,46 @@ public class PlayerInteract : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		// Notice when player is close to an interactable character
-		
-		// Show highlight on the character
-		
-		// If button is pressed, launch dialogue
-		if (Input.GetButtonDown("Fire1"))
+		// Check if mouse is clicked over a character trigger
+		if (false)//Input.GetMouseButtonDown(0))
 		{
-			// Check if mouse is clicked over a character trigger
-			if (Input.GetMouseButtonDown(0))
+			Physics2D.queriesHitTriggers = true;
+			Vector3 mouseOnWorld = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+			Vector2 mouseOnWorld2D = new Vector2(mouseOnWorld.x, mouseOnWorld.y);
+			RaycastHit2D hit = Physics2D.CircleCast(mouseOnWorld2D, 0.1f, Vector2.zero, 0.0f);
+			if (hit.collider != null)
 			{
-				Physics2D.queriesHitTriggers = true;
-				Vector3 mouseOnWorld = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-				Vector2 mouseOnWorld2D = new Vector2(mouseOnWorld.x, mouseOnWorld.y);
-				RaycastHit2D hit = Physics2D.CircleCast(mouseOnWorld2D, 0.1f, Vector2.zero, 0.0f);
-				if (hit.collider != null)
+				string tag = hit.collider.gameObject.tag;
+				if (tag == "Character")
 				{
-					string tag = hit.collider.gameObject.tag;
-					if (tag == "Character")
+					Character testCharacter = hit.collider.gameObject.GetComponentInParent<Character>();
+					if (testCharacter != null)
 					{
-						Character testCharacter = hit.collider.gameObject.GetComponent<Character>();
-						if (testCharacter != null)
-						{
-							interactionTarget = testCharacter;
-						}
+						interactionTarget = testCharacter;
 					}
-					else if (tag == "Symbol")
+				}
+				else if (tag == "Symbol")
+				{
+					Symbol testSymbol = hit.collider.gameObject.GetComponentInParent<Symbol>();
+					if (testSymbol != null)
 					{
-						Symbol testSymbol = hit.collider.gameObject.GetComponent<Symbol>();
-						if (testSymbol != null)
-						{
-							interactionSymbol = testSymbol;
-						}
+						interactionSymbol = testSymbol;
 					}
 				}
 			}
+		}
 
+		// When button is pressed start dialogue or interact with symbol
+		if (Input.GetButtonDown("Fire1"))
+		{
+			// Do not command symbols to progress dialogue
+			if (interactionSymbol != null)
+			{
+				interactionSymbol.OnSymbolInteracted();
+			}
 			if (interactionTarget != null)
 			{
-				// Do not command symbols to progress dialogue
-				if (interactionSymbol != null)
-				{
-					interactionSymbol.OnSymbolInteracted();
-				}
-				else
-				{
-					interactionTarget.ProgressDialogue();
-				}
+				interactionTarget.ProgressDialogue();
 			}
 		}
 	}
@@ -104,9 +97,8 @@ public class PlayerInteract : MonoBehaviour {
 			interactionTarget = other.gameObject.GetComponentInParent<Character>();
 			interactionTarget.EnableHighlight();
 		}
-		else if (other.tag == "Symbol")
+		if (other.tag == "Symbol")
 		{
-			Debug.Log("Trigger Symbol" + other.gameObject.name);
 			if (interactionSymbol != null)
 			{
 				interactionSymbol.DisableHighlight();

@@ -65,6 +65,7 @@ public class CafeLogic : MonoBehaviour {
 		
 	}
 	private CafeState cafeState = CafeState.Introduction;
+	private CafeState incomingState = CafeState.Introduction;
 
 	// How many of the drinks the player has 
 	// ordered: Tea: Coffee: Herbal tea
@@ -90,8 +91,10 @@ public class CafeLogic : MonoBehaviour {
 	
 	// Appearing characters
 	public List<GameObject> appearCharacters;
-	public float CharacterAppearDuration = 2.0f;
-	private float CharacterAppearCounter = 0.0f;
+	
+	public bool stateChangeInProgress = false;
+	public float stateChangeDuration = 3.0f;
+	public float stateChangeCounter = 0.0f;
 	
 	// Barista Raye
 	public GameObject RayeCat;
@@ -104,6 +107,7 @@ public class CafeLogic : MonoBehaviour {
 	
 	// Occult symbols
 	public List<GameObject> Symbols;
+	// Leave time for sounds to play
 
 	// Bell on the counter
 	public GameObject BellOnCounter;
@@ -197,6 +201,13 @@ public class CafeLogic : MonoBehaviour {
 	// a dialogue finishes
 	public void ChangeState(CafeState newState)
 	{
+		// Avoid getting stuck in a loop
+		if (!stateChangeInProgress && newState == CafeState.AllSymbolsInteracted && incomingState != CafeState.AllSymbolsInteracted)
+		{
+			incomingState = newState;
+			stateChangeInProgress = true;
+			return;
+		}
 		switch (newState)
 		{
 			case CafeState.Introduction:
@@ -277,7 +288,6 @@ public class CafeLogic : MonoBehaviour {
 				break;
 		}
 
-		CharacterAppearCounter = 0.0f;
 		cafeState = newState;
 	}
 
@@ -322,6 +332,16 @@ public class CafeLogic : MonoBehaviour {
 	// Update is called once per frame
 	void Update () 
 	{
+		if (stateChangeInProgress)
+		{
+			stateChangeCounter += Time.deltaTime;
+			if (stateChangeCounter >= stateChangeDuration)
+			{
+				stateChangeCounter = 0.0f;
+				stateChangeInProgress = false;
+				ChangeState(incomingState);
+			}
+		}
 		switch (cafeState)
 		{
 			case CafeState.AllDrinksDone:

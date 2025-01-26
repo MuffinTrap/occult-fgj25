@@ -11,13 +11,13 @@ public class Symbol : MonoBehaviour
 
 	private CafeLogic logic;
 	public bool hasBeenInteracted = false;
+	private AudioSource sound;
 
 	// Use this for initialization
 	void Start () {
 		logic = GameObject.Find("GameLogic").GetComponent<CafeLogic>();
+		sound = GetComponent<AudioSource>();
 	}
-	
-	// Update is called once per frame
 	
 	// Update is called once per frame
 	void Update () {
@@ -38,6 +38,7 @@ public class Symbol : MonoBehaviour
 	{
 		if (!hasBeenInteracted)
 		{
+			sound.PlayOneShot(sound.clip);
 			logic.AddSymbol();
 			hasBeenInteracted = true;
 		}
@@ -45,8 +46,11 @@ public class Symbol : MonoBehaviour
 
 	public void EnableHighlight()
 	{
-		highlighted = true;
-		
+		if (hasBeenInteracted == false)
+		{
+			highlighted = true;
+		}
+
 	}
 
 	public void DisableHighlight()
