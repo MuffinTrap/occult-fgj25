@@ -6,17 +6,8 @@ public class Dialogue : MonoBehaviour {
 
 
 	public string speaker;
-	public string[] text;
-	public int textIterator = 0;
+	public string[] textLines;
+	public AudioClip[] audioLines;
+	public int lineIterator = 0;
 
-
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
 }
