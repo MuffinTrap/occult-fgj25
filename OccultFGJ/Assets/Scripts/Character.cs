@@ -5,6 +5,15 @@ using UnityEngine;
 
 public class Character : MonoBehaviour {
 
+	public enum Characters
+	{
+		Darkness,
+		Raye,
+		Blanche,
+		Argent,
+		None
+	}
+	public Characters character;
 	bool highlighted = false;
 	DialogueManager dialogueManager;
 

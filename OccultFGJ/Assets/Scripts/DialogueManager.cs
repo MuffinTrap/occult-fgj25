@@ -20,6 +20,8 @@ public class DialogueManager : MonoBehaviour {
 	private Text textArea;
 	private AudioSource audioSource;
 
+	public Character.Characters latestCharacter;
+
 	private void Start() {
 		audioSource = GetComponent<AudioSource>();
 		if(audioSource == null)
@@ -31,6 +33,7 @@ public class DialogueManager : MonoBehaviour {
 	public void StartDialogue(GameObject character, DialogueTree dialogueTree)
 	{
 		state = DialogueState.Ongoing;
+		latestCharacter = character.GetComponent<Character>().character;
 		speechBubble.SetActive(true);
 
 		textArea = speechBubble.GetComponentInChildren<Text>();
@@ -58,6 +61,11 @@ public class DialogueManager : MonoBehaviour {
 	{
 		state = DialogueState.None;
 		speechBubble.SetActive(false);
+
+		if (latestCharacter == Character.Characters.Raye)
+		{
+			GameObject.Find("GameLogic").GetComponent<CafeLogic>().ChangeState(CafeLogic.CafeState.RayeInteractionDone);
+		}
 	}
 }
 

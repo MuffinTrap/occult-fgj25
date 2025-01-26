@@ -104,7 +104,14 @@ public class PlayerInteract : MonoBehaviour {
 				interactionSymbol.DisableHighlight();
 			}
 			interactionSymbol = other.gameObject.GetComponentInParent<Symbol>();
-			interactionSymbol.EnableHighlight();
+			if (interactionSymbol != null)
+			{
+				interactionSymbol.EnableHighlight();
+			}
+			if (interactionSymbol == null)
+			{
+				other.gameObject.GetComponentInParent<BellInteraction>().OnSymbolInteracted();
+			}
 		}
 	}
 
