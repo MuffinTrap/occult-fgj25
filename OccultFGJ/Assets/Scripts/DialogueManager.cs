@@ -18,6 +18,15 @@ public class DialogueManager : MonoBehaviour {
 	[SerializeField] public DialogueState state = DialogueState.None;
 	[SerializeField] public GameObject speechBubble;
 	private Text textArea;
+	private AudioSource audioSource;
+
+	private void Start() {
+		audioSource = GetComponent<AudioSource>();
+		if(audioSource == null)
+		{
+			audioSource = gameObject.AddComponent<AudioSource>();
+		}
+	}
 	
 	
 	public void StartDialogue(GameObject character, Dialogue dialogue)
@@ -27,27 +36,28 @@ public class DialogueManager : MonoBehaviour {
 
 		textArea = speechBubble.GetComponentInChildren<Text>();
 		speechBubble.transform.position = Camera.main.WorldToScreenPoint(character.transform.position);
-		textArea.text = dialogue.text[dialogue.textIterator];
+		textArea.text = dialogue.textLines[dialogue.lineIterator];
+		audioSource.PlayOneShot(dialogue.audioLines[dialogue.lineIterator], 1.0f);
 	}
 	
 	public void ProgressDialogue(Dialogue dialogue)
 	{
-		dialogue.textIterator++;
-		if (dialogue.textIterator >= dialogue.text.Length)
+		dialogue.lineIterator++;
+		if (dialogue.lineIterator >= dialogue.textLines.Length)
 		{
 			EndDialogue(dialogue);
 			return;
 		}
 
-		textArea.text = dialogue.text[dialogue.textIterator];
-		
+		textArea.text = dialogue.textLines[dialogue.lineIterator];
+		audioSource.PlayOneShot(dialogue.audioLines[dialogue.lineIterator], 1.0f);		
 	}
 
 	public void EndDialogue(Dialogue dialogue)
 	{
 		state = DialogueState.None;
 		speechBubble.SetActive(false);
-		dialogue.textIterator = 0;
+		dialogue.lineIterator = 0;
 	}
 }
 
