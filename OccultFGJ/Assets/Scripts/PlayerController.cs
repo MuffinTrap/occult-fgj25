@@ -13,6 +13,8 @@ public class PlayerController : MonoBehaviour {
 	Rigidbody2D rb;
 	SpriteRenderer spriteRenderer;
 	Animator animator;
+
+	DialogueManager dialogueManager;
 	// Use this for initialization
 	void Start () {
 		rb = GetComponent<Rigidbody2D>();
@@ -20,6 +22,7 @@ public class PlayerController : MonoBehaviour {
 		animator = GetComponentInChildren<Animator>();
 		
 		camera = Camera.main;
+		dialogueManager = GameObject.Find("DialogueManager").GetComponent<DialogueManager>();
 	}
 	
 	// Update is called once per frame
@@ -29,59 +32,66 @@ public class PlayerController : MonoBehaviour {
 
      void FixedUpdate()
     {
-		// keyboard movement
-		moveDirection = Input.GetAxis("Horizontal");
-		
-		rb.velocity = new Vector2(moveDirection * speed, 0);
-		Vector3 playerPosition = camera.WorldToScreenPoint(transform.position); // transforms transform.position to pixels
-
-		if (moveDirection > 0)
+		if (dialogueManager.state == DialogueManager.DialogueState.None)
 		{
-			spriteRenderer.flipX = true;
-            animator.SetBool("isWalking", true);
-        }
-		else { 
+			// keyboard movement
+			moveDirection = Input.GetAxis("Horizontal");
 			
-		}
-		//mouse movement
-		if (Input.GetButtonDown("Fire1"))
-		{
-			
-			moveTarget.x = Mathf.Clamp(Input.mousePosition.x, 406,970);
-			moveTargetReached = false;
+			rb.velocity = new Vector2(moveDirection * speed, 0);
+			Vector3 playerPosition = camera.WorldToScreenPoint(transform.position); // transforms transform.position to pixels
 
-		}
-
-		if (moveDirection < 0)
-		{
-            animator.SetBool("isWalking", true);
-            spriteRenderer.flipX = false;
-        }
-
-		if (Math.Abs(moveDirection) == 0)
-		{
-            animator.SetBool("isWalking", false);
-        }
-
-		if (moveTargetReached == false)
-		{
-			if (moveTarget.x > playerPosition.x)
+			if (moveDirection > 0)
 			{
-				rb.velocity = new Vector2(1 * speed, 0);
 				spriteRenderer.flipX = true;
+				animator.SetBool("isWalking", true);
 			}
-			else
+			else { 
+				
+			}
+			//mouse movement
+			if (Input.GetButtonDown("Fire1"))
 			{
-				rb.velocity = new Vector2(-1 * speed, 0);
-                spriteRenderer.flipX = false;
-            }
+				
+				moveTarget.x = Mathf.Clamp(Input.mousePosition.x, 406,970);
+				moveTargetReached = false;
 
-			if (Math.Abs(moveTarget.x - playerPosition.x) < 5)
+			}
+
+			if (moveDirection < 0)
 			{
-				moveTargetReached = true;
+				animator.SetBool("isWalking", true);
+				spriteRenderer.flipX = false;
+			}
+
+			if (Math.Abs(moveDirection) == 0)
+			{
+				animator.SetBool("isWalking", false);
+			}
+
+			if (moveTargetReached == false)
+			{
+				if (moveTarget.x > playerPosition.x)
+				{
+					rb.velocity = new Vector2(1 * speed, 0);
+					spriteRenderer.flipX = true;
+				}
+				else
+				{
+					rb.velocity = new Vector2(-1 * speed, 0);
+					spriteRenderer.flipX = false;
+				}
+
+				if (Math.Abs(moveTarget.x - playerPosition.x) < 5)
+				{
+					moveTargetReached = true;
+				}
 			}
 		}
-
-
+		else 
+		{
+			// in dialogue 
+			moveTargetReached = true;
+			rb.velocity = new Vector2(0, 0);
+		}
     }
 }

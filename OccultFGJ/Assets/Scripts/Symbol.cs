@@ -11,12 +11,20 @@ public class Symbol : MonoBehaviour
 
 	private CafeLogic logic;
 	public bool hasBeenInteracted = false;
-	private AudioSource sound;
+	[SerializeField] private AudioSource sound;
+	[SerializeField] private GameObject particles;
+
 
 	// Use this for initialization
 	void Start () {
 		logic = GameObject.Find("GameLogic").GetComponent<CafeLogic>();
+		
 		sound = GetComponent<AudioSource>();
+		if(sound == null)
+		{
+			sound = gameObject.AddComponent<AudioSource>();
+		}
+
 	}
 	
 	// Update is called once per frame
@@ -41,6 +49,7 @@ public class Symbol : MonoBehaviour
 			sound.PlayOneShot(sound.clip);
 			logic.AddSymbol();
 			hasBeenInteracted = true;
+			particles.SetActive(true);
 		}
 	}
 

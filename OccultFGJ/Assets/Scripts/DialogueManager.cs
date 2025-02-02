@@ -39,16 +39,12 @@ public class DialogueManager : MonoBehaviour {
 		textArea = speechBubble.GetComponentInChildren<Text>();
 		speechBubble.transform.position = Camera.main.WorldToScreenPoint(character.transform.position);
 
-		ActDialogue(dialogueTree.GetDialogue());
+		ProgressDialogue(dialogueTree);
 	}
 	
 	public void ProgressDialogue(DialogueTree dialogueTree)
 	{
-		ActDialogue(dialogueTree.NextLine());
-	}
-
-	void ActDialogue(Dialogue dialogue)
-	{
+		Dialogue dialogue = dialogueTree.NextLine();
 		if (dialogue == null)
 		{
 			return;

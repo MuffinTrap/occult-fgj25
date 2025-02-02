@@ -76,7 +76,7 @@ public class CafeLogic : MonoBehaviour {
 	
 	// How many of the symbols the player
 	// has interacted with 0-3
-	private int symbolsCounter = 0;
+	[SerializeField] private int symbolsCounter = 0;
 	
 	// When symbols are visible, player spooky music
 	private MusicPlayer cafeMusicPlayer;
@@ -246,6 +246,8 @@ public class CafeLogic : MonoBehaviour {
 			case CafeState.RayeInteractionDone:
 				// DEMO  
 				ChangeState(CafeState.ToCredits);
+
+				// ChangeState(CafeState.DrinkTea);
 
 				break;
 			case CafeState.DrinkTea:
