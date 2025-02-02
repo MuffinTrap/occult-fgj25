@@ -16,6 +16,7 @@ public class BellInteraction : MonoBehaviour {
 	void Start () {
 		logic = GameObject.Find("GameLogic").GetComponent<CafeLogic>();
 		sound = GetComponent<AudioSource>();
+		sound.volume = PlayerPrefs.GetFloat("MusicVolume");
 	}
 	
 	// Update is called once per frame

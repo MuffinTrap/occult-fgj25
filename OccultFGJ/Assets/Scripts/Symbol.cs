@@ -11,6 +11,7 @@ public class Symbol : MonoBehaviour
 
 	private CafeLogic logic;
 	public bool hasBeenInteracted = false;
+	public AudioClip sfx;
 	[SerializeField] private AudioSource sound;
 	[SerializeField] private GameObject particles;
 
@@ -23,6 +24,7 @@ public class Symbol : MonoBehaviour
 		if(sound == null)
 		{
 			sound = gameObject.AddComponent<AudioSource>();
+			sound.volume = PlayerPrefs.GetFloat("MusicVolume");
 		}
 
 	}
@@ -46,7 +48,7 @@ public class Symbol : MonoBehaviour
 	{
 		if (!hasBeenInteracted)
 		{
-			sound.PlayOneShot(sound.clip);
+			sound.PlayOneShot(sfx);
 			logic.AddSymbol();
 			hasBeenInteracted = true;
 			particles.SetActive(true);

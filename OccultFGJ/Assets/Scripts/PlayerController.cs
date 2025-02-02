@@ -89,9 +89,19 @@ public class PlayerController : MonoBehaviour {
 		}
 		else 
 		{
-			// in dialogue 
+			// in a dialogue, stop moving
 			moveTargetReached = true;
 			rb.velocity = new Vector2(0, 0);
+
+			// Face the dialogue partner
+			if (dialogueManager.partner.transform.position.x > camera.WorldToScreenPoint(transform.position).x)
+			{
+				spriteRenderer.flipX = true;
+			}
+			else 
+			{
+				spriteRenderer.flipX = false;
+			}
 		}
     }
 }

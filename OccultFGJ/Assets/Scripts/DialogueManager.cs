@@ -20,20 +20,21 @@ public class DialogueManager : MonoBehaviour {
 	private Text textArea;
 	private AudioSource audioSource;
 
-	public Character.Characters latestCharacter;
+	public GameObject partner;
 
 	private void Start() {
 		audioSource = GetComponent<AudioSource>();
 		if(audioSource == null)
 		{
 			audioSource = gameObject.AddComponent<AudioSource>();
+			audioSource.volume = PlayerPrefs.GetFloat("MusicVolume");
 		}
 	}
 
 	public void StartDialogue(GameObject character, DialogueTree dialogueTree)
 	{
 		state = DialogueState.Ongoing;
-		latestCharacter = character.GetComponent<Character>().character;
+		partner = character;
 		speechBubble.SetActive(true);
 
 		textArea = speechBubble.GetComponentInChildren<Text>();
@@ -53,7 +54,8 @@ public class DialogueManager : MonoBehaviour {
 		MoveSpeechBubble(dialogue);
 
 		textArea.text = dialogue.textLines[dialogue.lineIterator];
-		audioSource.PlayOneShot(dialogue.audioLines[dialogue.lineIterator], 1.0f);
+		audioSource.clip = dialogue.audioLines[dialogue.lineIterator];
+		audioSource.Play(0);
 	}
 
 	public void EndDialogue()
@@ -61,10 +63,15 @@ public class DialogueManager : MonoBehaviour {
 		state = DialogueState.None;
 		speechBubble.SetActive(false);
 
-		if (latestCharacter == Character.Characters.Raye)
+		if (partner.GetComponent<Character>().character == Character.Characters.Raye)
 		{
-			GameObject.Find("GameLogic").GetComponent<CafeLogic>().ChangeState(CafeLogic.CafeState.RayeInteractionDone);
+			ChangeGameStateTo(CafeLogic.CafeState.RayeInteractionDone);
 		}
+	}
+
+	public void ChangeGameStateTo(CafeLogic.CafeState newState)
+	{
+		GameObject.Find("GameLogic").GetComponent<CafeLogic>().ChangeState(newState);
 	}
 
 	public void MoveSpeechBubble(Dialogue dialogue)

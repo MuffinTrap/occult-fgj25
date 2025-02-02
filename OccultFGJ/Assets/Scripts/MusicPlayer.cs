@@ -8,6 +8,8 @@ public class MusicPlayer : MonoBehaviour
 	private AudioClip cafeMusic;
 	[SerializeField]
 	private AudioClip spookyMusic;
+	[SerializeField]
+	private float volume;
 
 	private enum MusicPlaying
 	{
@@ -23,7 +25,7 @@ public class MusicPlayer : MonoBehaviour
 	void Start () {
 		currentMusic = MusicPlaying.None;
 		musicSource = GetComponent<AudioSource>();
-		musicSource.volume = PlayerPrefs.GetFloat("MusicVolume");
+		musicSource.volume = PlayerPrefs.GetFloat("MusicVolume") * volume;
 		PlayCafeMusic();
 	}
 
